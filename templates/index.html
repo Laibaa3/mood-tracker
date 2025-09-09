@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mood Tracker</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+</head>
+<body style="
+    {% if moods %}
+        {% set today_mood = moods[-1].split('|')[1].split(':')[1].strip() %}
+        {% if today_mood == 'happy' %}background-color: #d0f0c0;{% endif %}
+        {% if today_mood == 'okay' %}background-color: #fff3b0;{% endif %}
+        {% if today_mood == 'sad' %}background-color: #add8e6;{% endif %}
+    {% else %}
+        background-color: #e0f7fa;
+    {% endif %}
+">
+    <h1>Mood Tracker</h1>
+    <p style="font-style: italic; color: #00796b; font-size: 1.2em;">{{ quote }}</p>
+
+    <form method="POST">
+        <label>How are you feeling today? (happy, okay, sad):</label><br>
+        <input type="text" name="mood" required><br><br>
+
+        <label>Write a short note about your day:</label><br>
+        <input type="text" name="note" required><br><br>
+
+        <input type="submit" value="Save Mood">
+    </form>
+
+    <p>{{ message }}</p>
+
+<ul>
+    {% for line in moods %}
+        {% set entry_date = line.split('|')[0].strip() %}
+        {% if entry_date == today_date %}
+            <li>{{ line }}</li>
+        {% endif %}
+    {% endfor %}
+</ul>
+
+<button id="toggleButton" onclick="toggleMoods()">Show/Hide Moods</button>
+<div id="moodLists" style="display: none;">
+    <h2>Past Moods:</h2>
+    <ol>
+        {% for line in moods %}
+            {% set mood_text = line.split('|')[1].split(':')[1].strip() %}
+            {% if mood_text == 'happy' %}
+                <li class="mood-happy">😊 {{ line }}</li>
+            {% elif mood_text == 'okay' %}
+                <li class="mood-okay">😐 {{ line }}</li>
+            {% elif mood_text == 'sad' %}
+                <li class="mood-sad">😢 {{ line }}</li>
+            {% else %}
+                <li>{{ line }}</li>
+            {% endif %}
+        {% endfor %}
+    </ol>
+</div>
+<script>
+function toggleMoods() {
+    var x = document.getElementById("moodLists");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+}
+</script>
+
+<button id="themeToggle">Switch to Dark Mode</button>
+<script>
+const toggleBtn = document.getElementById("themeToggle");
+toggleBtn.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
+    if(document.body.classList.contains("dark-mode")) {
+        toggleBtn.innerText = "Switch to Light Mode";
+    } else {
+        toggleBtn.innerText = "Switch to Dark Mode";
+    }
+});
+</script>
+
+</body>
+</html>
